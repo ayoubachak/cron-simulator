@@ -1,73 +1,87 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Cron Simulator
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project simulates a CRON service using NestJS and PostgreSQL. The service allows you to create tasks, list all tasks, manually execute tasks, and automatically execute tasks based on their schedule.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Technologies Used
+- NestJS
+- PostgreSQL
+- TypeORM
+- @nestjs/schedule
 
-## Description
+## Prerequisites
+- Node.js
+- npm
+- PostgreSQL
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Getting Started
 
-## Installation
+### Installation
 
-```bash
-$ npm install
-```
+1. **Clone the repository**:
+    ```bash
+    git clone <repository_url>
+    cd cron-simulator
+    ```
 
-## Running the app
+2. **Install dependencies**:
+    ```bash
+    npm install
+    ```
 
-```bash
-# development
-$ npm run start
+3. **Set up PostgreSQL**:
+    - Make sure PostgreSQL is installed and running.
+    - Create a database named `cron_simulator`:
+      ```bash
+      psql -U postgres -c "CREATE DATABASE cron_simulator;"
+      ```
 
-# watch mode
-$ npm run start:dev
+4. **Configure the database connection**:
+    - Open `src/app.module.ts` and update the database connection settings:
+      ```typescript
+      TypeOrmModule.forRoot({
+        type: 'postgres',
+        host: 'localhost',
+        port: 5432,
+        username: 'your_username',  // Replace with your PostgreSQL username
+        password: 'your_password',  // Replace with your PostgreSQL password
+        database: 'cron_simulator',
+        autoLoadEntities: true,
+        synchronize: true,
+      })
+      ```
 
-# production mode
-$ npm run start:prod
-```
+### Running the Application
 
-## Test
+1. **Start the NestJS application**:
+    ```bash
+    npm run start
+    ```
 
-```bash
-# unit tests
-$ npm run test
+    The application will start on `http://localhost:3000`.
 
-# e2e tests
-$ npm run test:e2e
+### API Endpoints
 
-# test coverage
-$ npm run test:cov
-```
+- **Create a Task**:
+    ```bash
+    curl -X POST http://localhost:3000/tasks -H "Content-Type: application/json" -d '{"title": "Task 1", "daysOfWeek": [0, 1], "time": "08:00:00", "timezone": "Europe/Paris"}'
+    ```
 
-## Support
+- **List All Tasks**:
+    ```bash
+    curl http://localhost:3000/tasks
+    ```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- **Execute a Task Manually**:
+    ```bash
+    curl -X POST http://localhost:3000/tasks/1/execute
+    ```
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+### Example Task JSON
+```json
+{
+  "taskId": 1,
+  "title": "Task 1",
+  "daysOfWeek": [0, 1],
+  "time": "08:00:00",
+  "timezone": "Europe/Paris"
+}
