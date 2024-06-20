@@ -1,3 +1,4 @@
+// src/tasks/tasks.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -19,9 +20,12 @@ export class TasksService {
     return this.tasksRepository.find();
   }
 
-  async executeTask(id: number): Promise<void> {
-    const task = await this.tasksRepository.findOneBy({ taskId: id });
+  findOne(id: number): Promise<Task> {
+    return this.tasksRepository.findOneBy({ taskId: id });
+  }
 
+  async executeTask(id: number): Promise<void> {
+    const task = await this.findOne(id);
     if (task) {
       task.executed = true;
       await this.tasksRepository.save(task);
